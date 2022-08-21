@@ -1,0 +1,66 @@
+.list-container {
+  display: flex;
+  flex-direction: column;
+  margin: 50px;
+}
+
+.todoItem {
+  padding: 10px;
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.todoItem--check {
+  padding: 20px;
+}
+
+.todo--button {
+  padding: 8px;
+  height: 32px;
+  width: 32px;
+}
+
+.button--checked {
+  background-color: #28BA22;
+  color: #fff;
+}
+.button--checked:hover {
+  background-color: #00E893;
+}
+
+.button--unchecked {
+  background-color: #fff;
+}
+
+.todoItem--title {
+  display: flex;
+  align-self: center;
+  text-align: start;
+  margin-left: 20px;
+  margin-right: 20px;
+  width: 70%;
+}
+
+.todoItem--title__checked {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+.todoItem--action__form {
+  margin: 5px;
+}
+
+.todo--button__edit {
+  background-color: #F2CB05;
+}
+.todo--button__edit:hover {
+  background-color: #DBF227;
+}
+
+.todo--button__delete {
+  background-color: #D90404;
+}
+.todo--button__delete:hover {
+  background-color: #EF4444;
+}

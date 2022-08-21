@@ -1,0 +1,42 @@
+<%- include('./includes/head.ejs')%>
+
+  <div class="form-container">
+    <h1>My To Do List</h1>
+  
+    <form action="<% if(edit) { %>/update-todo<% } else { %>/save-todo<% } %>" method="post">
+      <input type="text" placeholder="Task" name="title" value="<% if(edit) { %><%= todoEdit.title %><% } %>" required>
+      <input type="hidden" name="todoId" value="<%=todoEdit.id%>">
+      <button type="submit"><% if(edit) { %>UPDATE<% } else { %>ADD<% } %></button>
+    </form>
+  </div>
+
+  <%if(todoList.length !==0) {%>
+    <ul class="list-container">
+      <% for(let todo of todoList) { %>
+        <li id="<%=todo.id%>" class="todoItem">
+          <form action="/change-checked-todo" method="post" class="todoItem--check">
+            <input type="hidden" value="<%=todo.id%>" name="todoId">
+            <button class="todo--button <% if (todo.isChecked) { %>button--checked<% } else { %>button--unchecked<% } %>" type="submit"><% if(todo.isChecked) { %><i class="fa-solid fa-check"></i><% } else { %><% } %></button>
+          </form>
+          <p class="todoItem--title <% if(todo.isChecked) { %>todoItem--title__checked<% } %>">
+            <%= todo.title %>
+          </span>
+          <div>
+            <form action="/edit-todo/<%=todo.id%>" method="get" class="todoItem--action__form">
+              <button class="todo--button todo--button__edit"><i class="fa-solid fa-pen"></i></button>
+            </form>
+            <form action="/delete-todo" method="post" class="todoItem--action__form">
+              <input type="hidden" value="<%=todo.id%>" name="todoId">
+              <button class="todo--button todo--button__delete"><i class="fa-solid fa-trash"></i></button>
+            </form>
+          </div>
+        </li>
+        <%}%>
+    </ul>
+    <%}else {%>
+      <% if (!edit) { %>
+        <p class="nothing">There's nothing to do!</p>
+      <% } %>
+    <%}%>
+
+<%- include('./includes/end.ejs')%>
