@@ -1,19 +1,5 @@
-const fs = require('fs');
-const { get } = require('http');
-const path = require('path');
+const db = require('../util/database');
 const { v4 } = require('uuid');
-
-const p = path.join(path.dirname(require.main.filename), 'data', 'todo.json');
-
-const getTodoListFromFile = cb => {
-  fs.readFile(p, (err, fileContent) => {
-    if(err) {
-      cb([]);
-    } else {
-      cb(JSON.parse(fileContent));
-    }
-  })
-}
 
 module.exports = class Todo {
   constructor(title) {
@@ -24,59 +10,30 @@ module.exports = class Todo {
   }
 
   save() {
-    getTodoListFromFile(todoList => {
-      todoList.push({
-        title: this.title,
-        id: this.id,
-        isChecked: this.isChecked 
-      });
-      fs.writeFile(p, JSON.stringify(todoList), err => console.log(err));
-    })
+    return db.execute('INSERT INTO todo (id, title, ischecked) VALUES (?, ?, ?)',
+    [this.id, this.title, this.isChecked]
+    )
   }
 
-  static fetchAll(cb) {
-    getTodoListFromFile(cb);
+  static fetchAll() {
+    return db.execute('SELECT * FROM todo');
   }
 
-  static fetchById(todoId, cb) {
-    getTodoListFromFile(todoList => {
-      const todo = todoList.filter(todo => todo.id === todoId);
-      if(todo) {
-        cb(todo);
-      } else {
-        cb({})
-      }
-    })
+  static fetchById(todoId) {
+    return db.execute('SELECT * FROM todo WHERE todo.id = ?', [todoId])
   }
 
-  static changeChecked(todoId) {
-    getTodoListFromFile(todoList => {
-      const updatedTodoList = todoList.map(todo => {
-        if(todo.id === todoId) {
-          todo.isChecked = !todo.isChecked;
-        }
-        return todo;
-      })
-      fs.writeFile(p, JSON.stringify(updatedTodoList), err => console.log(err));
-    })
+  static changeChecked(todoId, isChecked) {
+    let checked = isChecked ? 0 : 1;
+    return db.execute(`UPDATE todo SET ischecked = ? WHERE id = ?`, [checked, todoId]);
   }
 
   static updateTodo(todoId, updateTitle) {
-    getTodoListFromFile(todoList => {
-      const updateTodoList = todoList.map(todo => {
-        if(todo.id === todoId) {
-          todo.title = updateTitle;
-        }
-        return todo;
-      })
-      fs.writeFile(p, JSON.stringify(updateTodoList), err => console.log(err));
-    })
+    return db.execute('UPDATE todo SET title = ? WHERE id = ?',
+    [updateTitle, todoId])
   }
 
   static deleteTodoById(todoId) {
-    getTodoListFromFile(todoList => {
-      const updatedTodoList = todoList.filter(todo => todo.id !== todoId);
-      fs.writeFile(p, JSON.stringify(updatedTodoList), err => console.log(err));
-    })
+    return db.execute('DELETE FROM todo WHERE id = ?', [todoId]);
   }
 }
